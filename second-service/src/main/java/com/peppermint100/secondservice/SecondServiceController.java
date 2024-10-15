@@ -19,4 +19,9 @@ public class SecondServiceController {
         System.out.println(secondRequestHeader);
         return "Second Service Message";
     }
+
+    @GetMapping("/check")
+    public String check() {
+        return "Second Service Check";
+    }
 }
