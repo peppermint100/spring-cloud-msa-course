@@ -29,5 +29,11 @@ spring:
             - Path=/second-service/**
           filters:
             - CustomFilter
+      default-filters:
+        - name: GlobalFilter
+          args:
+            baseMessage: Spring Cloud Gateway base message
+            preLogger: true
+            postLogger: true
 #            - AddRequestHeader=second-request, second-request-header
 #            - AddResponseHeader=second-response, second-response-header
