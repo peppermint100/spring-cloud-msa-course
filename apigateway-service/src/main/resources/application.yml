@@ -11,29 +11,14 @@ eureka:
 
 spring:
   application:
-    name: apigateway-service
+    name: gateway-service
   cloud:
     gateway:
       routes:
-        - id: first-service
-          uri: lb://MY-FIRST-SERVICE # first-service? ???? ?? ? ??? ???
+        - id: user-service
+          uri: lb://USER-SERVICE
           predicates:
-            - Path=/first-service/**
-          filters:
-#            - AddRequestHeader=first-request, first-request-header
-#            - AddResponseHeader=first-response, first-response-header
-            - CustomFilter
-        - id: second-service
-          uri: lb://MY-SECOND-SERVICE # second-service? ???? ?? ? ??? ???
-          predicates:
-            - Path=/second-service/**
-          filters:
-            - name: CustomFilter
-            - name: LoggingFilter
-              args:
-                baseMessage: Spring Cloud Gateway base message
-                preLogger: true
-                postLogger: true
+            - Path=/user-service/**
       default-filters:
         - name: GlobalFilter
           args:

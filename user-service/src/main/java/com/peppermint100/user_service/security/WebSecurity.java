@@ -18,10 +18,10 @@ public class WebSecurity {
         http
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(request -> {
-                request.requestMatchers(antMatcher("/users/**")).permitAll();
+                request.requestMatchers(antMatcher("/user-service/**")).permitAll();
                 request.requestMatchers(antMatcher("/h2-console/**")).permitAll(); // h2 콘솔 경로 허용
             })
-            .headers(header -> {
+            .headers(header -> { // h2 console은 frame을 사용하므로 frame에 대해서 시큐리티를 disable
                 header.frameOptions(frameOptions -> {
                     frameOptions.disable();
                 });

@@ -1,6 +1,7 @@
 package com.peppermint100.user_service.controller;
 
 import com.peppermint100.user_service.dto.UserDto;
+import com.peppermint100.user_service.jpa.UserEntity;
 import com.peppermint100.user_service.service.UserService;
 import com.peppermint100.user_service.vo.Greeting;
 import com.peppermint100.user_service.vo.RequestUser;
@@ -11,11 +12,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Array;
+import java.util.ArrayList;
+import java.util.List;
+
 @RestController
-@RequestMapping("/")
+@RequestMapping("/user-service")
 public class UserController {
 
     private Environment env;
@@ -31,7 +35,7 @@ public class UserController {
 
     @GetMapping("/health_check")
     public String status() {
-        return "User Service Health Check OK";
+        return String.format("User Service Health Check OK on PORT %s", env.getProperty("local.server.port"));
     }
 
     @GetMapping("/welcome")
@@ -47,5 +51,24 @@ public class UserController {
         userService.createUser(userDto);
         ResponseUser responseUser = mapper.map(userDto, ResponseUser.class);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseUser);
+    }
+
+    @GetMapping("/users")
+    public ResponseEntity<List<ResponseUser>> getUsers() {
+        Iterable<UserEntity> userList = userService.getUserByAll();
+        List<ResponseUser> users = new ArrayList<>();
+
+        userList.forEach(v -> {
+            users.add(new ModelMapper().map(v, ResponseUser.class));
+        });
+
+        return ResponseEntity.status(HttpStatus.OK).body(users);
+    }
+
+    @GetMapping("/users/{userId}")
+    public ResponseEntity<ResponseUser> getUserByUserId(@PathVariable("userId") String userId) {
+        UserDto userDto = userService.getUserById(userId);
+        ResponseUser returnedUser = new ModelMapper().map(userDto, ResponseUser.class);
+        return ResponseEntity.status(HttpStatus.OK).body(returnedUser);
     }
 }
