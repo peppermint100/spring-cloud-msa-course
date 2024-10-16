@@ -1,15 +1,28 @@
 server:
-  port: 0 # 랜덤 포트를 할당
+#  port: 0 # 랜덤 포트를 할당
+  port: 8081
 
 spring:
   application:
     name: user-service
+  h2:
+    console:
+      enabled: true
+      settings:
+        web-allow-others: true
+      path: /h2-console
+  datasource:
+    url: jdbc:h2:mem:testdb
+    generate-unique-name: false
 
 eureka:
   instance:
-    instance-id: ${spring.cloud.client.hostname}:${spring.application.instance_id:${random.value}} # eureka에서 서버를 식별하기 위해서
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}} # eureka에서 서버를 식별하기 위해서
   client:
     register-with-eureka: true # 유레카에 이 서버를 등록한다는 뜻
     fetch-registry: true
     service-url:
       defaultZone: http://127.0.0.1:8761/eureka
+
+greeting:
+  message: Welcome to user service.
