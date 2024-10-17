@@ -12,6 +12,11 @@ eureka:
 spring:
   application:
     name: gateway-service
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: guest
+    password: guest
   cloud:
     gateway:
       routes:
@@ -27,6 +32,14 @@ spring:
           filters:
             - RemoveRequestHeader=Cookie # POST는 매번 새로운 값처럼 인식하기 위해 헤더 삭제
             - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+        - id: user-actuator
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/actuator/**
+            - Method=GET,POST
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/user-service(?<segment>.*), /$\{segment}
         - id: user-get
           uri: lb://USER-SERVICE
           predicates:
@@ -63,3 +76,9 @@ spring:
 
 token:
   secret: token_secret
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh, health, beans, httptrace, busrefresh
