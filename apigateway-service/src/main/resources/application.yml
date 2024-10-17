@@ -35,6 +35,7 @@ spring:
           filters:
             - RemoveRequestHeader=Cookie # POST는 매번 새로운 값처럼 인식하기 위해 헤더 삭제
             - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+            - AuthorizationHeaderFilter
         - id: user-signup
           uri: lb://USER-SERVICE
           predicates:
@@ -59,3 +60,6 @@ spring:
             postLogger: true
 #            - AddRequestHeader=second-request, second-request-header
 #            - AddResponseHeader=second-response, second-response-header
+
+token:
+  secret: token_secret
