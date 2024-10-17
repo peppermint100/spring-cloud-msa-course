@@ -25,3 +25,11 @@ eureka:
 
 greeting:
   message: Welcome to user service.
+
+logging:
+  level:
+    com.peppermint100.user_service: DEBUG
+
+token:
+  expiration_time: 86400000
+  secret: token_secret
