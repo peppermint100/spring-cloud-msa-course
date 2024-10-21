@@ -1,5 +1,6 @@
 package com.peppermint100.user_service.service;
 
+import com.peppermint100.user_service.client.OrderServiceClient;
 import com.peppermint100.user_service.dto.UserDto;
 import com.peppermint100.user_service.jpa.UserEntity;
 import com.peppermint100.user_service.jpa.UserRepository;
@@ -22,14 +23,17 @@ public class UserServiceImpl implements UserService {
 
     private UserRepository userRepository;
     private BCryptPasswordEncoder passwordEncoder;
+    private OrderServiceClient orderServiceClient;
 
     @Autowired
     public UserServiceImpl(
             UserRepository userRepository,
-            BCryptPasswordEncoder passwordEncoder
+            BCryptPasswordEncoder passwordEncoder,
+            OrderServiceClient orderServiceClient
             ) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.orderServiceClient = orderServiceClient;
     }
 
     @Override
@@ -55,7 +59,7 @@ public class UserServiceImpl implements UserService {
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         UserDto userDto = mapper.map(userEntity, UserDto.class);
 
-        List<ResponseOrder> orders = new ArrayList<>();
+        List<ResponseOrder> orders = orderServiceClient.getOrders(userId);
         userDto.setOrders(orders);
 
         return userDto;
