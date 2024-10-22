@@ -62,14 +62,17 @@ public class UserServiceImpl implements UserService {
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         UserDto userDto = mapper.map(userEntity, UserDto.class);
 
-        List<ResponseOrder> orders = null;
+//        List<ResponseOrder> orders = null;
+//
+//        try {
+//            orders = orderServiceClient.getOrders(userId);
+//            userDto.setOrders(orders);
+//        } catch (FeignException ex) {
+//            log.error(ex.getMessage());
+//        }
 
-        try {
-            orders = orderServiceClient.getOrders(userId);
-            userDto.setOrders(orders);
-        } catch (FeignException ex) {
-            log.error(ex.getMessage());
-        }
+        List<ResponseOrder> orders = orderServiceClient.getOrders(userId);
+        userDto.setOrders(orders);
 
         return userDto;
     }
