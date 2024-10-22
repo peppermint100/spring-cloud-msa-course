@@ -15,7 +15,7 @@ public class OrderEntity implements Serializable { // 다른 Network로 전송�
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 120, unique = true)
+    @Column(nullable = false, length = 120)
     private String productId;
     @Column(nullable = false)
     private Integer qty;
@@ -23,9 +23,9 @@ public class OrderEntity implements Serializable { // 다른 Network로 전송�
     private Integer unitPrice;
     @Column(nullable = false)
     private Integer totalPrice;
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String userId;
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String orderId;
 
     @Column(nullable = false, updatable = false, insertable = false)
