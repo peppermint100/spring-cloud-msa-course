@@ -32,7 +32,7 @@ logging:
     level: "%5p [%X{traceId:-},%X{spanId:-}]"
 
 management:
-  endpoint:
+  endpoints:
     web:
       exposure:
         include: refresh, health, beans, httptrace, busrefresh, info, metrics, prometheus
