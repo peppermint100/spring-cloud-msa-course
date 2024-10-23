@@ -7,6 +7,7 @@ import com.peppermint100.orderservice.messagequeue.OrderProducer;
 import com.peppermint100.orderservice.service.OrderService;
 import com.peppermint100.orderservice.vo.RequestOrder;
 import com.peppermint100.orderservice.vo.ResponseOrder;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/order-service")
+@Slf4j
 public class OrderController {
 
     private Environment env;
@@ -48,6 +50,7 @@ public class OrderController {
             @RequestBody RequestOrder orderDetails,
             @PathVariable("userId") String userId
     ) {
+        log.info("Before added order data");
         ModelMapper mapper = new ModelMapper();
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 
@@ -56,6 +59,8 @@ public class OrderController {
         orderDto.setUserId(userId);
         OrderDto createdOrder = orderService.createOrder(orderDto);
         ResponseOrder responseOrder = mapper.map(createdOrder, ResponseOrder.class);
+
+        log.info("After added order data");
 
         // kafka
 //        orderDto.setOrderId(UUID.randomUUID().toString());
@@ -72,7 +77,8 @@ public class OrderController {
     @GetMapping("/{userId}/orders")
     public ResponseEntity<List<ResponseOrder>> getOrder(
             @PathVariable("userId") String userId
-    ) {
+    ) throws Exception {
+        log.info("Before retrieve order data");
         Iterable<OrderEntity> orderList = orderService.getOrdersByUserId(userId);
         ModelMapper mapper = new ModelMapper();
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
@@ -81,6 +87,15 @@ public class OrderController {
         orderList.forEach(v -> {
             result.add(mapper.map(v, ResponseOrder.class));
         });
+
+        try {
+            Thread.sleep(1000);
+            throw new Exception("장애 발생");
+        } catch (InterruptedException ex) {
+            log.error(ex.getMessage());
+        }
+
+        log.info("after retrieve order data");
 
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
