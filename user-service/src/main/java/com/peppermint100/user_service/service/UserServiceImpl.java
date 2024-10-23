@@ -10,12 +10,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.sql.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -27,16 +30,14 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
     private BCryptPasswordEncoder passwordEncoder;
     private OrderServiceClient orderServiceClient;
+    private CircuitBreakerFactory circuitBreakerFactory;
 
     @Autowired
-    public UserServiceImpl(
-            UserRepository userRepository,
-            BCryptPasswordEncoder passwordEncoder,
-            OrderServiceClient orderServiceClient
-            ) {
+    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder, OrderServiceClient orderServiceClient, CircuitBreakerFactory circuitBreakerFactory) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.orderServiceClient = orderServiceClient;
+        this.circuitBreakerFactory = circuitBreakerFactory;
     }
 
     @Override
@@ -71,7 +72,11 @@ public class UserServiceImpl implements UserService {
 //            log.error(ex.getMessage());
 //        }
 
-        List<ResponseOrder> orders = orderServiceClient.getOrders(userId);
+        // ErrorDecoder
+//        List<ResponseOrder> orders = orderServiceClient.getOrders(userId);
+
+        CircuitBreaker circuitBreaker = circuitBreakerFactory.create("circuitbreaker");
+        List<ResponseOrder> orders = circuitBreaker.run(() -> orderServiceClient.getOrders(userId), throwable -> new ArrayList<>());
         userDto.setOrders(orders);
 
         return userDto;
