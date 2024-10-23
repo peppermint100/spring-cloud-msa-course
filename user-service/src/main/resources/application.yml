@@ -45,7 +45,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: refresh, health, beans, busrefresh # actuator 종류 등록
+        include: refresh, health, beans, busrefresh, info, metrics, prometheus # actuator 종류 등록
   tracing:
     sampling:
       probability: 1.0

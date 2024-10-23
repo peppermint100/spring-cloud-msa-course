@@ -32,6 +32,10 @@ logging:
     level: "%5p [%X{traceId:-},%X{spanId:-}]"
 
 management:
+  endpoint:
+    web:
+      exposure:
+        include: refresh, health, beans, httptrace, busrefresh, info, metrics, prometheus
   tracing:
     sampling:
       probability: 1.0
