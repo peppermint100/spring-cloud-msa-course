@@ -1,0 +1,20 @@
+version: "3.8"
+
+services:
+  mysql:
+    container_name: my_mysql
+    image: mysql:8.4
+    volumes:
+      - ./initdb.d:/docker-entrypoint-initdb.d
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_DATABASE=mydb
+      - MYSQL_ROOT_PASSWORD=root1234
+    networks:
+      - my_network
+
+networks:
+  my_network:
+    name: ecommerce-network
+    external: true
