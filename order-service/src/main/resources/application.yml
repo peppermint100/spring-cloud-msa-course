@@ -10,6 +10,9 @@ spring:
     show-sql: true
     generate-ddl: true
     defer-datasource-initialization: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
   datasource:
     url: jdbc:mysql://localhost:3306/mydb
     driver-class-name: com.mysql.cj.jdbc.Driver
